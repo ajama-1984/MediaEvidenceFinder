@@ -5,10 +5,9 @@ import speech_recognition as sr
 from moviepy.editor import AudioFileClip
 from pathlib import Path
 import magic
-import os.path
 from os import path
-from pocketsphinx import AudioFile, get_model_path, get_data_path
-from termcolor import colored
+from pocketsphinx import get_model_path, get_data_path
+
 
 model_path = get_model_path()
 data_path = get_data_path()
@@ -23,7 +22,7 @@ def TranscribeVideo (filepath):
         rate = f.getframerate()
         duration = frames / float(rate)
         print('rate', rate, 'frames', frames, 'duration', duration)
-    total_duration = math.ceil(duration / 60)
+    total_duration = math.ceil(duration)
     r = sr.Recognizer()
     for z in range(0, total_duration):
         with sr.AudioFile(transcribed_audio_file_name) as source:

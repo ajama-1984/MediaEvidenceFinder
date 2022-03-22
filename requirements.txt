@@ -1,0 +1,4 @@
+SpeechRecognition>=3.8.1
+moviepy==1.0.3
+pocketsphinx>=0.1.15
+python-magic-bin==0.4.14
