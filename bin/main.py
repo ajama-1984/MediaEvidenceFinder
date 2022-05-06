@@ -31,7 +31,7 @@ def TranscribeVideo (filepath):
         filename = Path(filepath).name
         video_transcript_folderpath = '../transcripts/Video/'
         f = open(video_transcript_folderpath + timestr + "-" + str(filename) + "-" + "transcription.txt", "a")
-        speech = r.recognize_sphinx(audio, language='en-us', show_all=False)
+        speech = r.recognize_sphinx(audio, language='en-us', show_all=True)
         print(speech)
         f.write(str(speech))
         f.write(" ")
