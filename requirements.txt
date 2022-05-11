@@ -2,3 +2,5 @@ SpeechRecognition>=3.8.1
 moviepy==1.0.3
 pocketsphinx>=0.1.15
 python-magic-bin==0.4.14
+vosk~=0.3.32
+path~=16.4.0

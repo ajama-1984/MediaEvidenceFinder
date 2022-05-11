@@ -1,23 +1,29 @@
-import path
 import magic
-from pathlib import Path
 import glob, os
+import ffmpeg
+from hachoir.parser import createParser
+from hachoir.metadata import extractMetadata
 
 def identify_file():
-    dbdict = {}
+    dbdict = dict()
+
     pathToFolder = input("Please provide folder containing evidence:")
     if os.path.exists(pathToFolder):
         print("Path Exists")
         for filename in os.scandir(pathToFolder):
-            file_name = filename.path
+            file_path = filename.path
             mime = magic.Magic(mime=True)
-            file_type = mime.from_file(file_name)
+            file_type = mime.from_file(file_path)
+            parser = createParser(file_path)
+            metadata = extractMetadata(parser)
+            print(metadata)
             if str(file_type).__contains__("audio") or str(file_type).__contains__("video"):
-                dbdict.update({file_name:file_type})
+                file_properties = str(file_type) + str(metadata)
+                dbdict.update({filename:file_properties})
         func_code = "200"
         print(dbdict)
         print(func_code)
-        return func_code,dbdict
+        return func_code, dbdict
     else:
         func_code = "404"
         print(func_code)

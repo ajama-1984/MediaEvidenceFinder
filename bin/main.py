@@ -85,6 +85,8 @@ def keyWord_Search (transcription_path,keywords):
 
 if __name__ == '__main__':
     mime = magic.Magic(mime=True)
+    print(model_path)
+    print(data_path)
     filepath = input("Please input the path to your file:")
     if path.exists(filepath):
         FileType = mime.from_file(filepath)
