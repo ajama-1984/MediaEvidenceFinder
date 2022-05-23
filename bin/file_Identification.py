@@ -4,13 +4,11 @@ import ffmpeg
 from hachoir.parser import createParser
 from hachoir.metadata import extractMetadata
 
-def identify_file():
+def identify_file(EvidencePath):
     dbdict = dict()
-
-    pathToFolder = input("Please provide folder containing evidence:")
-    if os.path.exists(pathToFolder):
+    if os.path.exists(EvidencePath):
         print("Path Exists")
-        for filename in os.scandir(pathToFolder):
+        for filename in os.scandir(EvidencePath):
             file_path = filename.path
             mime = magic.Magic(mime=True)
             file_type = mime.from_file(file_path)
