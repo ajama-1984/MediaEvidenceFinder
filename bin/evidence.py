@@ -19,9 +19,9 @@ class Evidence(Case):
         evidenceFolderPath = os.path.normpath(evidenceFolderUsrPath)
         if os.path.exists(evidenceFolderPath):
             print("Path Valid")
-            evidence = identify_file(evidenceFolderPath)
-            print(evidenceFolderPath)
-            print(evidence)
+            fileIdentification = identify_file(evidenceFolderPath)
+            print(fileIdentification)
+
 
 
 

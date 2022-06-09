@@ -15,11 +15,9 @@ rec = KaldiRecognizer(model, wf.getframerate())
 
 transcription = []
 
-
-
 while True:
     data = wf.readframes(4000)
-    pbar.update(len(data))
+    pbar.update(len(data)) # PROGRESS BAR NOT WORKING - IN TO-DO LIST
     if len(data) == 0:
         pbar.set_description("Transcription finished")
         break

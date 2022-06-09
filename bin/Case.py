@@ -30,14 +30,18 @@ class Case:
         casePath = os.path.join(parent_dir, workingDir)
         if os.path.exists(casePath):
             print("Case Folder already exists")
+            func_code = "409"
+            print(func_code)
+            return func_code
         else:
             print(
                 "A case with the following settings will be created \n" + caseID + " " + caseName + " " + caseDescription + " " + investigator + " " + CaseConfigName)
             os.makedirs(casePath)
             now = datetime.now()  # current date and time
-            currentDate_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+            CreatedTime = now.strftime("%m/%d/%Y, %H:%M:%S")
             config = ConfigParser()
             config['CaseConfiguration'] = {}
+            config['Evidence'] = {}
             CaseConfiguration = config['CaseConfiguration']
             CaseConfiguration['caseID'] = caseID
             CaseConfiguration['caseName'] = caseName
@@ -45,7 +49,7 @@ class Case:
             CaseConfiguration['investigator'] = investigator
             CaseConfiguration['CaseConfigName'] = CaseConfigName
             CaseConfiguration['casePath'] = casePath
-            CaseConfiguration['CreatedTime'] = currentDate_time
+            CaseConfiguration['CreatedTime'] = CreatedTime
             CaseConfiguration['ModifiedDateTime'] = ModifiedDateTime
 
             caseconfigFullFileName = CaseConfigName + '.CASE'
@@ -58,7 +62,17 @@ class Case:
                 config.write(configfile)
                 func_code = "200"
 
-            return func_code, caseID, CaseConfigName, caseName, caseDescription, investigator, currentDate_time, ModifiedDateTime, casePath
+            configDict = dict()
+            configDict.update({"caseID":caseID})
+            configDict.update({"caseName": caseName})
+            configDict.update({"caseDescription": caseDescription})
+            configDict.update({"CaseConfigName": CaseConfigName})
+            configDict.update({"investigator": investigator})
+            configDict.update({"casePath": casePath})
+            configDict.update({"CreatedTime": CreatedTime})
+            configDict.update({"ModifiedDateTime": ModifiedDateTime})
+
+            return func_code, configDict
 
     def openCase(self):
         case_file_extensions = ['*.CASE']
@@ -68,6 +82,7 @@ class Case:
         # ]
         # userpath = filedialog.askopenfilename(title="Select file", filetypes=ftypes)
         userpath = input ("Please provide path to .CASE Config file \n")
+        userpath = userpath.replace('"','')
         config = ConfigParser()
         config['CaseConfiguration'] = {}
         caseFile = os.path.normpath(userpath)
@@ -87,7 +102,6 @@ class Case:
 
             configDict = dict()
 
-            #TO-DO - FOR LOOP FOR ALL CASE ITEMS
             configDict.update({"caseID":caseID})
             configDict.update({"caseName": caseName})
             configDict.update({"caseDescription": caseDescription})
@@ -97,16 +111,56 @@ class Case:
             configDict.update({"CreatedTime": CreatedTime})
             configDict.update({"ModifiedDateTime": ModifiedDateTime})
 
-            # print(configDict)
-            #
-            # print(caseID + "\n" + caseName + "\n" + caseDescription + "\n" + investigator + "\n" + CaseConfigName + "\n" + casePath + "\n" +CreatedTime + "\n" + ModifiedDateTime)
-
-            #OpenedCase = Case.__init__(self,caseID,CaseConfigName,caseName,caseDescription, investigator,CreatedTime,ModifiedDateTime,casePath)
-
+            print(configDict)
             func_code = "200"
-
             return func_code,configDict
         else:
             print("Invalid Case Config File")
             func_code = "404"
             return func_code
+
+    def get_caseID(self,currentCase):
+        caseDetails = currentCase[1]
+        caseID = caseDetails['caseID']
+        return caseID
+
+    def get_caseName(self,currentCase):
+        caseDetails = currentCase[1]
+        caseName = caseDetails['caseName']
+        return caseName
+
+    def get_caseDescription(self,currentCase):
+        caseDetails = currentCase[1]
+        caseDescription = caseDetails['caseDescription']
+        return caseDescription
+
+    def get_CaseConfigName(self,currentCase):
+        caseDetails = currentCase[1]
+        CaseConfigName = caseDetails['CaseConfigName']
+        return CaseConfigName
+
+    def get_investigator(self,currentCase):
+        caseDetails = currentCase[1]
+        investigator = caseDetails['investigator']
+        return investigator
+
+    def get_casePath(self,currentCase):
+        caseDetails = currentCase[1]
+        casePath = caseDetails['casePath']
+        return casePath
+
+    def get_CreatedTime(self,currentCase):
+        caseDetails = currentCase[1]
+        CreatedTime = caseDetails['CreatedTime']
+        return CreatedTime
+
+    def get_ModifiedDateTime(self,currentCase):
+        caseDetails = currentCase[1]
+        ModifiedDateTime = caseDetails['ModifiedDateTime']
+        return ModifiedDateTime
+
+    def caseFuncCodeCheck (self,currentCase):
+        func_code = currentCase[0]
+        return func_code
+
+
