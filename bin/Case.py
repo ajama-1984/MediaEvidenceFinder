@@ -8,7 +8,7 @@ from tkinter import filedialog
 
 class Case:
     def __init__(self, caseID, CaseConfigName, caseName, caseDescription, investigator, createdDateTime,
-                 ModifiedDateTime, casePath):
+                 ModifiedDateTime, NumberOfEvidenceItems, EvidenceIDList, ReportPath, case_Keywords, casePath):
         self.caseID = caseID
         self.caseName = caseName
         self.caseDescription = caseDescription
@@ -17,6 +17,10 @@ class Case:
         self.CaseConfigName = CaseConfigName
         self.casePath = casePath
         self.ModifiedDateTime = ModifiedDateTime
+        self.NumberOfEvidenceItems = NumberOfEvidenceItems
+        self.EvidenceIDList = EvidenceIDList
+        self.ReportPath = ReportPath
+        self.case_Keywords = case_Keywords
 
     def createCase(self):
         caseID = input("Provide CaseID: \n")
@@ -25,6 +29,10 @@ class Case:
         investigator = input("Enter Name of Investigator: \n")
         CaseConfigName = input("Enter name of case configuration file: \n")
         ModifiedDateTime = "null"
+        NumberOfEvidenceItems = "0"
+        EvidenceIDList = ' '
+        ReportPath = ""
+        case_Keywords = ""
         parent_dir = expanduser("~")
         workingDir = "MediaEvidenceFinder\\" + CaseConfigName
         casePath = os.path.join(parent_dir, workingDir)
@@ -41,7 +49,6 @@ class Case:
             CreatedTime = now.strftime("%m/%d/%Y, %H:%M:%S")
             config = ConfigParser()
             config['CaseConfiguration'] = {}
-            config['Evidence'] = {}
             CaseConfiguration = config['CaseConfiguration']
             CaseConfiguration['caseID'] = caseID
             CaseConfiguration['caseName'] = caseName
@@ -51,8 +58,13 @@ class Case:
             CaseConfiguration['casePath'] = casePath
             CaseConfiguration['CreatedTime'] = CreatedTime
             CaseConfiguration['ModifiedDateTime'] = ModifiedDateTime
-
+            CaseConfiguration['NumberOfEvidenceItems'] = NumberOfEvidenceItems
+            CaseConfiguration['EvidenceIDList'] = EvidenceIDList
+            CaseConfiguration['ReportPath'] = ReportPath
+            CaseConfiguration['case_Keywords'] = case_Keywords
             caseconfigFullFileName = CaseConfigName + '.CASE'
+            caseconfigFullFilePath = casePath + "\\" + caseconfigFullFileName
+            print (caseconfigFullFilePath)
             print(caseconfigFullFileName)
             os.chdir(casePath)
             os.mkdir("Transcripts")
@@ -71,26 +83,22 @@ class Case:
             configDict.update({"casePath": casePath})
             configDict.update({"CreatedTime": CreatedTime})
             configDict.update({"ModifiedDateTime": ModifiedDateTime})
-
-            return func_code, configDict
+            configDict.update({"NumberOfEvidenceItems": NumberOfEvidenceItems})
+            configDict.update({"evidenceidlist": EvidenceIDList})
+            configDict.update({"ReportPath": ReportPath})
+            configDict.update({"case_Keywords": case_Keywords})
+            return func_code, configDict, caseconfigFullFilePath
 
     def openCase(self):
-        case_file_extensions = ['*.CASE']
-        # ftypes = [
-        #     ('Case Config files', case_file_extensions),
-        #     ('All files', '*'),
-        # ]
-        # userpath = filedialog.askopenfilename(title="Select file", filetypes=ftypes)
         userpath = input ("Please provide path to .CASE Config file \n")
         userpath = userpath.replace('"','')
         config = ConfigParser()
         config['CaseConfiguration'] = {}
         caseFile = os.path.normpath(userpath)
-        #print(caseFile)
         filename, extension = (os.path.splitext(caseFile))
-        if extension == ".CASE":
+        file_exists = os.path.exists(caseFile)
+        if extension == ".CASE" and file_exists == True:
             config.read(caseFile)
-            #print(config.sections())
             caseID = (config.get('CaseConfiguration','caseID'))
             caseName = (config.get('CaseConfiguration', 'caseName'))
             caseDescription = (config.get('CaseConfiguration', 'caseDescription'))
@@ -99,7 +107,10 @@ class Case:
             casePath = (config.get('CaseConfiguration', 'casePath'))
             CreatedTime = (config.get('CaseConfiguration', 'CreatedTime'))
             ModifiedDateTime = (config.get('CaseConfiguration', 'ModifiedDateTime'))
-
+            NumberOfEvidenceItems = (config.get('CaseConfiguration', 'NumberOfEvidenceItems'))
+            EvidenceIDList = (config.get('CaseConfiguration', 'evidenceidlist'))
+            ReportPath = (config.get('CaseConfiguration', 'ReportPath'))
+            case_Keywords = (config.get('CaseConfiguration', 'case_Keywords'))
             configDict = dict()
 
             configDict.update({"caseID":caseID})
@@ -110,10 +121,13 @@ class Case:
             configDict.update({"casePath": casePath})
             configDict.update({"CreatedTime": CreatedTime})
             configDict.update({"ModifiedDateTime": ModifiedDateTime})
-
+            configDict.update({"NumberOfEvidenceItems": NumberOfEvidenceItems})
+            configDict.update({"evidenceidlist": EvidenceIDList})
+            configDict.update({"ReportPath": ReportPath})
+            configDict.update({"case_Keywords": case_Keywords})
             print(configDict)
             func_code = "200"
-            return func_code,configDict
+            return func_code,configDict,caseFile
         else:
             print("Invalid Case Config File")
             func_code = "404"
@@ -158,6 +172,30 @@ class Case:
         caseDetails = currentCase[1]
         ModifiedDateTime = caseDetails['ModifiedDateTime']
         return ModifiedDateTime
+
+    def getCaseConfigFileName (self, currentCase):
+        caseConfigFileName = currentCase[2]
+        return caseConfigFileName
+
+    def getNumberOfEvidenceItems (self, currentCase):
+        caseDetails = currentCase[1]
+        NumberOfEvidenceItems = caseDetails['NumberOfEvidenceItems']
+        return NumberOfEvidenceItems
+
+    def getEvidenceIDList (self,currentCase):
+        caseDetails = currentCase[1]
+        EvidenceIDList = caseDetails['evidenceidlist']
+        return EvidenceIDList
+
+    def getReportPath (self,currentCase):
+        caseDetails = currentCase[1]
+        ReportPath = caseDetails['ReportPath']
+        return ReportPath
+
+    def getcase_Keywords (self,currentCase):
+        caseDetails = currentCase[1]
+        case_Keywords = caseDetails['case_Keywords']
+        return case_Keywords
 
     def caseFuncCodeCheck (self,currentCase):
         func_code = currentCase[0]

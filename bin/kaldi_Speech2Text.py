@@ -3,11 +3,12 @@ import wave
 import json
 import os
 from tqdm.notebook import tqdm
-wav_file = r"C:\Users\Ahmed\Documents\Audio Evidence\test.wav"
+from audio_extraction import extract_audio_from_source
+wav_file = r"C:\Users\Ahmed\MediaEvidenceFinder\TEST001\ExtractedAudioFiles\transcribed_audio_speech16bit2audio.wav"
 
 wf = wave.open(wav_file, "rb")
 model = Model(r"C:\Users\Ahmed\PycharmProjects\SpeechTranscription\models\Kaldi")
-recogniser  = KaldiRecognizer(model,16000)
+recogniser = KaldiRecognizer(model,16000)
 file_size = os.path.getsize(wav_file)
 
 pbar = tqdm(total=file_size)

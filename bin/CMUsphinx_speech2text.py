@@ -32,4 +32,4 @@ def pocketsphinx_S2T (pathToFile, fileName, file_type, transcribed_audio_file_na
         func_code = "404"
         return func_code
 
-def pocketsphinx_S2T (pathToFile, fileName, file_type, transcribed_audio_file_name, func_code):
+# def pocketsphinx_S2T (pathToFile, fileName, file_type, transcribed_audio_file_name, func_code):

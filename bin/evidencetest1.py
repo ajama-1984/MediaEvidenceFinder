@@ -43,21 +43,15 @@ class Evidence(Case):
                 print("Adding Evidence to CASE configuration file")
                 NumberOfEvidenceItems = Case.getNumberOfEvidenceItems(self,CurrentCase)
                 config = ConfigParser(strict=False)
+                NumberOfEvidenceItems = int(NumberOfEvidenceItems)
+                updatedNumberOfEvidenceItems = str(NumberOfEvidenceItems + 1)
+                EvidenceListName = str("Evidence" + updatedNumberOfEvidenceItems)
+                listofEvidence = []
+                config[EvidenceListName] = {}
+                config['CaseConfiguration'] = {}
+                EvidenceItemConfiguration = config[EvidenceListName]
                 config.read(caseFile)
-                listEvidence = Case.getEvidenceIDList(self, CurrentCase)
-                listEvidence = listEvidence.split(",")
                 for key, value in files_identified.items():
-                    ExistingEvidencelist = Case.getEvidenceIDList(self, CurrentCase)
-                    NumberOfEvidenceItems = int(NumberOfEvidenceItems)
-                    # print(NumberOfEvidenceItems)
-                    NumberOfEvidenceItems += 1
-                    print(NumberOfEvidenceItems)
-                    EvidenceListName = "Evidence" + str(NumberOfEvidenceItems)
-                    print(EvidenceListName)
-                    listEvidence.append(EvidenceListName)
-                    # print(listEvidence)
-                    config[EvidenceListName] = {}
-                    EvidenceItemConfiguration = config[EvidenceListName]
                     evidenceItem = key
                     Evidenceproperties = str(value)
                     EvidenceAttribute = Evidenceproperties.split('|')
@@ -71,11 +65,11 @@ class Evidence(Case):
                     evidenceFileExtension = EvidenceAttribute[7]
                     evidenceFileHash = EvidenceAttribute[9]
                     evidenceAddedDateTime = EvidenceAttribute[10]
-
+                    NumberOfEvidenceItems = int(NumberOfEvidenceItems)
+                    updatedNumberOfEvidenceItems = str(NumberOfEvidenceItems + 1)
                     print(evidenceFileName)
-                    strNumberOfEvidenceItems = str(NumberOfEvidenceItems)
-
-                    EvidenceItemConfiguration['evidenceID'] = strNumberOfEvidenceItems
+                    print(NumberOfEvidenceItems)
+                    EvidenceItemConfiguration['evidenceID'] = updatedNumberOfEvidenceItems
                     EvidenceItemConfiguration['evidenceItem'] = evidenceItem
                     EvidenceItemConfiguration['evidencemimeType'] = evidencemimeType
                     EvidenceItemConfiguration['evidenceFileName'] = evidenceFileName
@@ -87,61 +81,20 @@ class Evidence(Case):
                     EvidenceItemConfiguration['evidenceFileExtension'] = evidenceFileExtension
                     EvidenceItemConfiguration['evidenceFileHash'] = evidenceFileHash
                     EvidenceItemConfiguration['evidenceAddedDateTime'] = evidenceAddedDateTime
-                    EvidenceItemConfiguration['aSRTranscription_Engine_Used'] = ""
-                    EvidenceItemConfiguration['aSRTranscription_Model_Used'] = ""
-                    EvidenceItemConfiguration['transcriptLocation'] = ""
-
-                    config.get('CaseConfiguration', 'numberofevidenceitems')
-                    config.set('CaseConfiguration', 'numberofevidenceitems', strNumberOfEvidenceItems)
-                    addedEvidence = ','.join(str(x) for x in listEvidence)
-                    config.get('CaseConfiguration', 'evidenceidlist')
-                    config.set('CaseConfiguration', 'evidenceidlist', addedEvidence)
-                with open(caseFile, 'w') as configfile:
-                    config.write(configfile)
-                    func_code = "200"
-                    return func_code
+                    EvidenceIDList = str(listofEvidence.append(EvidenceListName))
+                    print(EvidenceIDList)
+                    config.set('CaseConfiguration', 'NumberOfEvidenceItems',updatedNumberOfEvidenceItems)
+                    config.set('CaseConfiguration', 'EvidenceIDList', EvidenceIDList)
+                    with open(caseFile, 'w') as configfile:
+                        config.write(configfile)
+                        func_code = "200"
+                        return func_code
             else:
                 if import_check == "No" or "no" or "n":
                     print("The Files have not been imported as evidence")
                 else:
                     print("Invalid Selection Exiting the Program")
                     exit(0)
-
-
-    def retrieveEvidence (self, CaseConfigFileName, currentCase):
-        config = ConfigParser(strict=False)
-        config['CaseConfiguration'] = {}
-        config.read(CaseConfigFileName)
-        EvidenceList = (config.get('CaseConfiguration', 'evidenceidlist'))
-        EvidenceList = EvidenceList.split(",")
-        EvidenceList[:] = [x for x in EvidenceList if x]
-        for evidenceItem in EvidenceList:
-            evidenceid = config.get(str(evidenceItem), 'evidenceid')
-            evidenceitem = config.get(str(evidenceItem), 'evidenceitem')
-            evidencemimetype = config.get(str(evidenceItem), 'evidencemimetype')
-            evidencefilename = config.get(str(evidenceItem),'evidencefilename')
-            evidencefilepath = config.get(str(evidenceItem), 'evidencefilepath')
-            evidencefilesize = config.get(str(evidenceItem), 'evidencefilesize')
-            evidencefilecreationtime = config.get(str(evidenceItem), 'evidencefilecreationtime')
-            evidencefileaccessedtime = config.get(str(evidenceItem), 'evidencefileaccessedtime')
-            evidencefilemodifiedtime = config.get(str(evidenceItem), 'evidencefilemodifiedtime')
-            evidencefileextension = config.get(str(evidenceItem), 'evidencefileextension')
-            evidencefilehash = config.get(str(evidenceItem), 'evidencefilehash')
-            evidenceaddeddatetime = config.get(str(evidenceItem), 'evidenceaddeddatetime')
-
-            print("Evidence ID: " + evidenceid)
-            print("Evidence Source Full Path: " + evidenceitem)
-            print("Evidence MIME Type: " + evidencemimetype)
-            print("Evidence File Name: " + evidencefilename)
-            print("Evidence Source Folder: " + evidencefilepath)
-            print("Evidence File Size: " + evidencefilesize)
-            print("Evidence Created on: " + evidencefilecreationtime)
-            print("Evidence Last Accessed: " + evidencefileaccessedtime)
-            print("Evidence Last Modified: " + evidencefilemodifiedtime)
-            print("Evidence File Extension: " + evidencefileextension)
-            print("Evidence File Hash (SHA-1): " + evidencefilehash)
-            print("Evidence Added on: " + evidenceaddeddatetime)
-            print("========================================================")
 
     def evidenceFuncCodeCheck (self,currentEvidence):
         func_code = currentEvidence[0]
