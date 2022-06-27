@@ -19,5 +19,5 @@ def extract_audio_from_source (evidenceitem, evidencefilename, casePath):
     evidenceitemAudio = os.path.normpath(evidenceitem) + evidencefilename2
     print("TEST" + evidenceitemAudio)
     audioclip = AudioFileClip(evidenceitemAudio)
-    audioclip.write_audiofile(extractedAudioPath, nbytes=2, codec='pcm_s16le', ffmpeg_params=["-ac", "1"])
+    audioclip.write_audiofile(extractedAudioPath, nbytes=2, codec='pcm_s16le', ffmpeg_params=["-ac", "1", "-ar", "16000"])
     return extractedAudioPath, extractedtranscriptPath
