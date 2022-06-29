@@ -2,7 +2,7 @@ import self as self
 from Case import Case
 from evidence import Evidence
 from ASR import ASREngine
-
+from keyword_searching import search_Keywords
 if __name__ == '__main__':
     print("========================================================")
     print("Welcome to MediaEvidenceFinder Application")
@@ -135,7 +135,9 @@ if __name__ == '__main__':
                                 print(CaseConfigFileName)
                                 print(CurrentCase)
                                 ASREngine.ASREngine(self, CaseConfigFileName, CurrentCase)
-
+                                userChoice = input("Press 1 to search transcribed evidence for keywords")
+                                if userChoice == "1":
+                                    search_Keywords(CaseConfigFileName)
                     else:
                         print("Invalid Selection - Exiting Program")
             else:
