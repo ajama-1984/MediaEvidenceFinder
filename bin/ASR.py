@@ -64,12 +64,9 @@ class ASREngine:
                     return func_code
             else:
                 if userInput == "3":
-                    try:
-                        extractedAudio = ASREngine.extractAudio(self, CaseConfigFileName, CurrentCase)
-                        deepSpeech(extractedAudio, CaseConfigFileName)
-                    except:
-                        print("Error Transcribing Evidence")
-                        exit(0)
+                    extractedAudio = ASREngine.extractAudio(self, CaseConfigFileName, CurrentCase)
+                    casePath = Case.get_casePath(self, CurrentCase)
+                    deepSpeech(extractedAudio, CaseConfigFileName, casePath)
                 else:
                     print("Invalid Selection Exiting Program")
                     exit(0)

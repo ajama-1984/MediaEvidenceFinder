@@ -70,6 +70,7 @@ class Case:
             os.mkdir("Transcripts")
             os.mkdir("Reports")
             os.mkdir("ExtractedAudioFiles")
+            os.mkdir("AudioChunks")
             with open(caseconfigFullFileName, 'w') as configfile:
                 config.write(configfile)
                 func_code = "200"
