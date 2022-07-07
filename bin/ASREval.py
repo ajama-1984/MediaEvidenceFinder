@@ -14,17 +14,19 @@ def random_selection():
     filename = r"../dataset/commonVoice/tsv/test.tsv"
     sampleFileListExists = []
     n = sum(1 for line in open(filename, encoding="utf8")) - 1
-    numberOfSamplesinDataset = 16335  # sample size of all dataset
-    numberOfSamplesRequired = 376 # number of samples required
+    numberOfSamplesinDataset = 3000  # sample size of all dataset
+    numberOfSamplesRequired = 376  # number of samples required
     skip = sorted(random.sample(range(1, n + 1), n - numberOfSamplesinDataset))
     df = pandas.read_csv(filename, skiprows=skip, sep='\t')
     sampleFileList = df["path"].to_list()
+    counter = 0
     for x in sampleFileList:
         dirpath = r'Z:\DissertationSoftwareDev\files\cv-corpus-9.0-2022-04-27\en\clips'
         srcpath = os.path.join(dirpath, x)
         if os.path.exists(srcpath) == True:
             sampleFileListExists.append(x)
-            print(x)
+            counter = counter + 1
+            print(str(counter))
     list_of_random_samples_selected = random.sample(sampleFileListExists, numberOfSamplesRequired)
     print("Selection Complete! \n")
     print(list_of_random_samples_selected)
@@ -33,7 +35,7 @@ def random_selection():
 
 def sampleRetrieval(sampleFileList):
     dirpath = r'Z:\DissertationSoftwareDev\files\cv-corpus-9.0-2022-04-27\en\clips'
-    destDirectory = r'C:\Users\Ahmed\PycharmProjects\SpeechTranscription\dataset\commonVoice\clips'
+    destDirectory = r'../dataset/commonVoice/clips'
     for fname in sampleFileList:
         srcpath = os.path.join(dirpath, fname)
         print(srcpath)
@@ -41,27 +43,14 @@ def sampleRetrieval(sampleFileList):
         shutil.copy(srcpath, destDirectory)
     print("Complete!")
 
-# def randomFileSelector():
-#     dirpath = r'Z:\DissertationSoftwareDev\files\cv-corpus-9.0-2022-04-27\en\clips'
-#     destDirectory = r'C:\Users\Ahmed\PycharmProjects\SpeechTranscription\dataset\commonVoice\clips'
-#     numberOfSamples = 1
-#     print("Selecting random sample of Media files from Mozilla Common Dataset - Test Set")
-#     filenames = random.sample(os.listdir(dirpath), numberOfSamples)
-#     for fname in filenames:
-#         srcpath = os.path.join(dirpath, fname)
-#         print(srcpath)
-#         print (destDirectory)
-#         shutil.copy(srcpath, destDirectory)
-#     print("Selection Complete! \n")
-#     return numberOfSamples
-
 def retrieveHumanBaseline(list_of_random_samples_selected):
     print("Retrieving Human Validated Transcripts from Mozilla Common Voice Test dataset CSV")
     validated_dataset_transcripts = r"../dataset/commonVoice/tsv/test.tsv"
     datasetdirectory = r"../dataset/commonVoice/clips"
+    absolutePath = os.path.abspath(datasetdirectory)
     audiodata_agregat = pandas.DataFrame()
     for file in list_of_random_samples_selected:
-        f = os.path.join(datasetdirectory, file)
+        f = os.path.join(absolutePath, file)
         if os.path.isfile(f):
             directory, audiofilename = os.path.split(f)
             df = pandas.read_csv(validated_dataset_transcripts, sep='\t')
@@ -110,10 +99,6 @@ def ASREval(ground_truth ,hypothesis, asrengine):
     hypothesis = jiwer.ToLowerCase()(hypothesis)
     ground_truth = jiwer.RemoveEmptyStrings()(ground_truth)
     hypothesis = jiwer.RemoveEmptyStrings()(hypothesis)
-
-
-    # print("ASR Transcript from" + asrengine + " = " + hypothesis)
-    # print("Human Validated Transcript = " + ground_truth)
 
     wer = jiwer.wer(ground_truth, hypothesis, truth_transform=transformation, hypothesis_transform=transformation)
     mer = jiwer.mer(ground_truth, hypothesis, truth_transform=transformation, hypothesis_transform=transformation)
