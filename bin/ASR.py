@@ -42,7 +42,8 @@ class ASREngine:
                     print("Extracting Audio from Evidence  - Please wait")
                     extractedAudio = ASREngine.extractAudio(self, CaseConfigFileName, CurrentCase)
                     print("Extracting Audio from Evidence Complete!")
-                    kaldi(extractedAudio, CaseConfigFileName)
+                    casePath = Case.get_casePath(self, CurrentCase)
+                    kaldi(extractedAudio, CaseConfigFileName, casePath)
                 except:
                     print("Evidence Audio Extraction/ Automated transcription ERROR!")
                     func_code = "404"
