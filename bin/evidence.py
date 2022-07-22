@@ -25,7 +25,7 @@ class Evidence(Case):
             files_identified = file_ident[1]
             return func_code, caseID, files_identified
 
-    def processEvidence(self,caseID,caseFile,func_code,files_identified,CurrentCase):
+    def processEvidence(self,caseFile,func_code,files_identified,CurrentCase):
         if files_identified is not None and func_code == "200":
             print("Looking for Media files - Please Wait")
             print("========================================================")

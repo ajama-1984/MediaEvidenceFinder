@@ -7,27 +7,33 @@ from ASR_S2T_Experiment_DeepSpeech import deepSpeechEvaluation
 from ASR_S2T_Experiment_PocketSphinx import PocketSphinxEvaluation
 from ASR_S2T_Experiment_Kaldi import kaldiEvaluation
 import os
-import glob
+import time
 
-def random_selection():
-    print("Selecting random sample of Media files from Mozilla Common Dataset - Test Set")
-    filename = r"../dataset/commonVoice/tsv/test.tsv"
-    sampleFileListExists = []
-    n = sum(1 for line in open(filename, encoding="utf8")) - 1
-    numberOfSamplesinDataset = 3000  # sample size of all dataset
-    numberOfSamplesRequired = 376  # number of samples required
-    skip = sorted(random.sample(range(1, n + 1), n - numberOfSamplesinDataset))
-    df = pandas.read_csv(filename, skiprows=skip, sep='\t')
+def random_selection(datasetcsvfile,dirpathDataset,
+                     numberOfSamplesinDataset,numberOfSamplesRequired):
+    sampleFileListExists = [] # create empty Sample List
+    # read all line from file
+    n = sum(1 for line in open(datasetcsvfile, encoding="utf8")) - 1
+    # generating random numbers to skip when retrieving CSV file
+    skip = sorted(random.sample(range(1, n + 1), n -
+                                numberOfSamplesinDataset))
+    # creating DataFrame and skipping random number of lines
+    df = pandas.read_csv(datasetcsvfile, skiprows=skip, sep='\t')
+    # retriving just the filename column
     sampleFileList = df["path"].to_list()
+    # Setting Counter to finish function when required samples reached
     counter = 0
+    # This checks to see if for each sample, the audio files exists
     for x in sampleFileList:
-        dirpath = r'Z:\DissertationSoftwareDev\files\cv-corpus-9.0-2022-04-27\en\clips'
-        srcpath = os.path.join(dirpath, x)
+        srcpath = os.path.join(dirpathDataset, x)
         if os.path.exists(srcpath) == True:
             sampleFileListExists.append(x)
             counter = counter + 1
             print(str(counter))
-    list_of_random_samples_selected = random.sample(sampleFileListExists, numberOfSamplesRequired)
+    # Once all files have been verified, a random sample required is selected
+    list_of_random_samples_selected = random.sample(
+                                    sampleFileListExists,
+                                        numberOfSamplesRequired)
     print("Selection Complete! \n")
     print(list_of_random_samples_selected)
     return list_of_random_samples_selected, numberOfSamplesRequired
@@ -107,9 +113,6 @@ def ASREval(ground_truth ,hypothesis, asrengine):
     return wer,mer,wil,asrengine
 
 def runASREvaluation(testlist, numberOfSamples):
-    resultsdf = pandas.DataFrame(columns = ['filename', 'Ground_Truth', 'Kaldi_Hypothesis', 'PocketSphinx_Hypothesis',
-                         'DeepSpeech_Hypothesis', 'Kaldi_WER', 'Kaldi_MER', 'Kaldi_WIL', 'PocketSphinx_WER',
-                         'PocketSphinx_MER', 'PocketSphinx_WIL', 'DeepSpeech_WER', 'DeepSpeech_MER', 'DeepSpeech_WIL'])
     resultsList = []
     counter = 0
     for i in testlist:
@@ -154,8 +157,6 @@ def runASREvaluation(testlist, numberOfSamples):
 
     resultsdf2 = pandas.DataFrame(resultsList)
     resultsdf2.to_csv('../dataset/commonVoice/validatedTranscripts/results.csv', index=False)
-
-
 
 if __name__ == '__main__':
     sampleFileList, numberOfSamples = random_selection()

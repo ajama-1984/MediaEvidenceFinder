@@ -6,6 +6,7 @@ from configparser import ConfigParser
 from datetime import datetime
 from audio_extraction import splitAudio
 from audio_extraction import convertMillis
+from keyword_searching import searchKeywords
 # Initialising default model and its parameters
 model_file_path = '../models/DeepSpeech/deepspeech-0.9.3-models.pbmm'
 lm_file_path = '../models/DeepSpeech/deepspeech-0.9.3-models.scorer'
@@ -70,8 +71,8 @@ def read_wav_file(filename):
         rate = w.getframerate()
         frames = w.getnframes()
         buffer = w.readframes(frames)
-        print(rate)
-        print(frames)
+        # print(rate)
+        # print(frames)
     return buffer, rate
 
 
@@ -93,6 +94,7 @@ def deepSpeech(extractedAudio, CaseConfigFileName, casePath):
         # print(evidenceItem)
         chunklist, lengthaudio, counter = splitAudio(mediafile,casePath)
         # print(chunklist)
+        keywordsFoundList = []
         for a in chunklist:
             z = a.split("|")
             wavchunk = z[0]
@@ -104,12 +106,10 @@ def deepSpeech(extractedAudio, CaseConfigFileName, casePath):
             endtime = convertMillis(int(splitTimeframe[1]))
             transcription_text = DeepSpeech_transcribe(wavchunk)
             # print(transcription_text)
-            for keyword in keyword_list:
-                if keyword in transcription_text:
-                    keywordsFound = []
-                    keywordsFound.append(keyword + "|" + starttime + "-" + endtime)
-                    print("The keyword of " + keyword + " Found in media file between " + str(starttime) + " and " + str(endtime))
-        print(keywordsFound)
+            keywordsFound = searchKeywords(keyword_list,transcription_text,starttime,endtime,evidenceItem)
+            for x in keywordsFound:
+                keywordsFoundList.append(x)
+        print(keywordsFoundList)
         transcription_text = DeepSpeech_transcribe(mediafile)
         # print(transcription_text)
         f = open(transcriptPath, "w")
@@ -125,6 +125,7 @@ def deepSpeech(extractedAudio, CaseConfigFileName, casePath):
         config.set(str(evidenceItem), 'asrtranscription_engine_used', ASREngineUsed)
         config.set(str(evidenceItem), 'asrtranscription_model_used', deepspeechModel)
         config.set(str(evidenceItem), 'transcriptlocation', transcriptPath)
+        config.set(str(evidenceItem), 'keywords', str(keywordsFound))
         now = datetime.now()
         modifiedDateTime = now.strftime("%m/%d/%Y, %H:%M:%S")
         config.set('CaseConfiguration', 'modifieddatetime', modifiedDateTime)

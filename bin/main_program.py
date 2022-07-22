@@ -135,9 +135,6 @@ if __name__ == '__main__':
                                 print(CaseConfigFileName)
                                 print(CurrentCase)
                                 ASREngine.ASREngine(self, CaseConfigFileName, CurrentCase)
-                                userChoice = input("Press 1 to search transcribed evidence for keywords")
-                                if userChoice == "1":
-                                    search_Keywords(CaseConfigFileName)
                     else:
                         print("Invalid Selection - Exiting Program")
             else:

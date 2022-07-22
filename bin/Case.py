@@ -43,7 +43,8 @@ class Case:
             return func_code
         else:
             print(
-                "A case with the following settings will be created \n" + caseID + " " + caseName + " " + caseDescription + " " + investigator + " " + CaseConfigName)
+                "A case with the following settings will be created \n" + "CaseID: " + caseID + "\nName of Case: " + caseName + "\nDescription of Case: " + caseDescription + "\nName of Investigator: " + investigator + "\nName of Case Configuration File: " + CaseConfigName)
+
             os.makedirs(casePath)
             now = datetime.now()  # current date and time
             CreatedTime = now.strftime("%m/%d/%Y, %H:%M:%S")

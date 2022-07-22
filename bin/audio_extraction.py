@@ -1,7 +1,6 @@
 from moviepy.editor import AudioFileClip
 import os
 from pydub import AudioSegment
-from pathlib import Path
 import datetime
 
 def extract_audio_from_source (evidenceitem, evidencefilename, casePath):
@@ -21,21 +20,21 @@ def extract_audio_from_source (evidenceitem, evidencefilename, casePath):
     audioclip.write_audiofile(extractedAudioPath, nbytes=2, codec='pcm_s16le', ffmpeg_params=["-ac", "1", "-ar", "16000"])
     return extractedAudioPath, extractedtranscriptPath
 
-def splitAudio(filename, casepath):
+def splitAudio(Audiofilename, casepath):
     # print(filename + "\n" + casepath)
     os.chdir(casepath)
     if not os.path.isdir("splitaudio"):
         os.mkdir("splitaudio")
-    audio = AudioSegment.from_file(filename)
+    audio = AudioSegment.from_file(Audiofilename)
     lengthaudio = len(audio)
     # print("Length of Audio File", lengthaudio)
     chunklist = []
     start = 0
     # # In Milliseconds, this will cut 10 Sec of audio
-    threshold = 10000
+    threshold = 30000
     end = 0
     counter = 0
-    basename = os.path.basename(filename)
+    basename = os.path.basename(Audiofilename)
     mediafile1 = os.path.splitext(basename)[0]
     # print(mediafile1)
     while start < len(audio):

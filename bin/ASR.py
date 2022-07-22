@@ -40,8 +40,7 @@ class ASREngine:
             if userInput == "1":
                 try:
                     print("Extracting Audio from Evidence  - Please wait")
-                    with yaspin():
-                        extractedAudio = ASREngine.extractAudio(self, CaseConfigFileName, CurrentCase)
+                    extractedAudio = ASREngine.extractAudio(self, CaseConfigFileName, CurrentCase)
                     print("Extracting Audio from Evidence Complete!")
                     kaldi(extractedAudio, CaseConfigFileName)
                 except:
@@ -57,9 +56,10 @@ class ASREngine:
                     print("Extracting Audio from Evidence  - Please wait")
                     with yaspin():
                         extractedAudio = ASREngine.extractAudio(self, CaseConfigFileName, CurrentCase)
-                    pocketSphinx(extractedAudio, CaseConfigFileName)
+                    casePath = Case.get_casePath(self, CurrentCase)
+                    pocketSphinx(extractedAudio, CaseConfigFileName, casePath)
                 except:
-                    print("Model/data is not valid. Chosen ASR Engine and Model has NOT been initialised")
+                    print("Program Error")
                     func_code = "404"
                     return func_code
             else:

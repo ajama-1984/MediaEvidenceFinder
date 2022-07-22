@@ -33,5 +33,21 @@ def search_Keywords (CaseConfigFileName):
         with open(CaseConfigFileName, 'w') as configfile:
             config.write(configfile)
 
+def searchKeywords(keyword_list,transcription_text, start_time, end_time, evidenceItem):
+    keywordsFoundList = []
+    for keyword in keyword_list:
+        if keyword in transcription_text:
+            keywordsFoundList.append(keyword + "|" + start_time + "-" + end_time)
+            print("The keyword of " + keyword + " Found in " + evidenceItem + " between " + str(
+                start_time) + " and " + str(end_time))
+    return keywordsFoundList
+
+
+
+
+
+
+
+
 
 
