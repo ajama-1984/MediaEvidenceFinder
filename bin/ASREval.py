@@ -7,7 +7,8 @@ from ASR_S2T_Experiment_DeepSpeech import deepSpeechEvaluation
 from ASR_S2T_Experiment_PocketSphinx import PocketSphinxEvaluation
 from ASR_S2T_Experiment_Kaldi import kaldiEvaluation
 import os
-import time
+from fractions import Fraction as frac
+from pydub import AudioSegment
 
 def random_selection(datasetcsvfile,dirpathDataset,
                      numberOfSamplesinDataset,numberOfSamplesRequired):
@@ -89,7 +90,7 @@ def extractDatasetAudio(list_of_random_samples_selected):
     print("Extraction and Conversion Complete! \n")
     return testlist
 
-def ASREval(ground_truth ,hypothesis, asrengine):
+def ASREval(ground_truth ,hypothesis, asrengine, transcription_time, sampleAudioLength):
     transformation = jiwer.Compose([
         jiwer.ToLowerCase(),
         jiwer.RemoveWhiteSpace(replace_by_space=True),
@@ -109,8 +110,14 @@ def ASREval(ground_truth ,hypothesis, asrengine):
     wer = jiwer.wer(ground_truth, hypothesis, truth_transform=transformation, hypothesis_transform=transformation)
     mer = jiwer.mer(ground_truth, hypothesis, truth_transform=transformation, hypothesis_transform=transformation)
     wil = jiwer.wil(ground_truth, hypothesis, truth_transform=transformation, hypothesis_transform=transformation)
+    rtf = frac(int(transcription_time), int(sampleAudioLength))
+    return wer,mer,wil,asrengine,rtf
 
-    return wer,mer,wil,asrengine
+def getAudioLength(filename):
+    audio = AudioSegment.from_file(filename)
+    audioLength = audio.duration_seconds
+    print(audioLength)
+    return audioLength
 
 def runASREvaluation(testlist, numberOfSamples):
     resultsList = []
@@ -119,9 +126,10 @@ def runASREvaluation(testlist, numberOfSamples):
         print(str(counter) + " out of " + str(numberOfSamples) + " samples randomly selected from the Mozilla Common Voice Dataset has been processed!")
         filename = str(Path(i).stem)
         print(filename)
-        deepspeechResult = str(deepSpeechEvaluation(i))
-        PocketSphinxResult = str(PocketSphinxEvaluation(i))
-        kaldiResult = str(kaldiEvaluation(i))
+        sampleAudioLength = getAudioLength(i)
+        deepspeechResult,deepspeechTranscriptionTime  = deepSpeechEvaluation(i)
+        PocketSphinxResult, pocketSphinxTranscriptionTime = PocketSphinxEvaluation(i)
+        kaldiResult, kaldiTranscriptionTime = kaldiEvaluation(i)
         validatedTranscripts = r"../dataset/commonVoice/validatedTranscripts/cVSampleTranscripts.csv"
         df = pandas.read_csv(validatedTranscripts, index_col=False)
         try:
@@ -133,9 +141,9 @@ def runASREvaluation(testlist, numberOfSamples):
         except:
             continue
         print("Assessing ASR Generated Transcript against Human Validated Transcript")
-        DSWER, DSMER, DSWIL, ASREngine = ASREval(validatedHypothesis,deepspeechResult, "Deepspeech")
-        PSWER, PSMER, PSWIL, ASREngine = ASREval(validatedHypothesis, PocketSphinxResult, "PocketSphinx")
-        KDWER, KDMER, KDWIL, ASREngine = ASREval(validatedHypothesis, kaldiResult, "Kaldi")
+        DSWER, DSMER, DSWIL, ASREngine, DSrtf = ASREval(validatedHypothesis,deepspeechResult, "Deepspeech", deepspeechTranscriptionTime, sampleAudioLength)
+        PSWER, PSMER, PSWIL, ASREngine, PSrtf = ASREval(validatedHypothesis, PocketSphinxResult, "PocketSphinx", pocketSphinxTranscriptionTime, sampleAudioLength)
+        KDWER, KDMER, KDWIL, ASREngine, KDrtf = ASREval(validatedHypothesis, kaldiResult, "Kaldi", kaldiTranscriptionTime, sampleAudioLength)
 
         # print("WER DeepSpeech = " + (str(int(DSWER*100)) + "%"))
         # print("MER DeepSpeech = " + (str(int(DSMER*100)) + "%"))
@@ -150,7 +158,7 @@ def runASREvaluation(testlist, numberOfSamples):
         # print("WIL Kaldi = " + (str(int(KDWIL*100)) + "%"))
 
         results = {'filename':filename,'Ground_Truth':validatedHypothesis,'Kaldi_Hypothesis':kaldiResult,'PocketSphinx_Hypothesis':PocketSphinxResult,'DeepSpeech_Hypothesis':deepspeechResult,'Kaldi_WER':KDWER,'Kaldi_MER':KDMER,
-                 'Kaldi_WIL':KDWIL,'PocketSphinx_WER':PSWER,'PocketSphinx_MER':PSMER,'PocketSphinx_WIL':PSWIL,'DeepSpeech_WER':DSWER,'DeepSpeech_MER':DSMER,'DeepSpeech_WIL':DSWIL}
+                 'Kaldi_WIL':KDWIL,'Kaldi_RTF':KDrtf,'PocketSphinx_WER':PSWER,'PocketSphinx_MER':PSMER,'PocketSphinx_WIL':PSWIL, 'PocketSphinx_RTF':PSrtf,'DeepSpeech_WER':DSWER,'DeepSpeech_MER':DSMER,'DeepSpeech_WIL':DSWIL, 'eepSpeech_RTF':DSrtf}
 
         resultsList.append(results)
         counter = counter + 1
@@ -159,7 +167,13 @@ def runASREvaluation(testlist, numberOfSamples):
     resultsdf2.to_csv('../dataset/commonVoice/validatedTranscripts/results.csv', index=False)
 
 if __name__ == '__main__':
-    sampleFileList, numberOfSamples = random_selection()
+    datasetcsvfile = r"../dataset/commonVoice/tsv/test.tsv"
+    dirpathDataset = r'Z:\DissertationSoftwareDev\files\cv-corpus-9.0-2022-04-27\en\clips'
+    numberOfSamplesinDataset = 5
+    numberOfSamplesRequired = 1
+
+    sampleFileList, numberOfSamples = random_selection(datasetcsvfile,dirpathDataset,
+                     numberOfSamplesinDataset,numberOfSamplesRequired)
     sampleRetrieval(sampleFileList)
     retrieveHumanBaseline(sampleFileList)
     testlist = extractDatasetAudio(sampleFileList)

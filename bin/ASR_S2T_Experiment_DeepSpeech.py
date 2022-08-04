@@ -29,14 +29,13 @@ def DeepSpeech_transcribe(extractedAudioFile):
     return model.stt(data16)
 
 def deepSpeechEvaluation(extractedAudioFile):
-    duration = librosa.get_duration(filename=extractedAudioFile)
     t0 = time.time()
     transcription_text = DeepSpeech_transcribe(extractedAudioFile)
+    transcription_text = str(transcription_text)
     t1 = time.time()
     total_transcription_time = t1 - t0
-    print("Duration of Recording is = " + str(duration))
-    print("Total Transcription Time = " + str(total_transcription_time))
-    return transcription_text
+    print(str(total_transcription_time))
+    return transcription_text, total_transcription_time
 
 
 if __name__ == '__main__':

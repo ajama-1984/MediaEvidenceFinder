@@ -2,6 +2,7 @@ from vosk import Model, KaldiRecognizer
 import wave
 import json
 import os
+import time
 from vosk import SetLogLevel
 SetLogLevel(-1)
 
@@ -12,6 +13,7 @@ def kaldiEvaluation (extractedAudio):
     rec = KaldiRecognizer(model, wf.getframerate())
     transcription = []
     while True:
+        t0 = time.time()
         data = wf.readframes(4000)
         if len(data) == 0:
             break
@@ -21,9 +23,13 @@ def kaldiEvaluation (extractedAudio):
             # print(result_dict)
             transcription.append(result_dict.get("text", ""))
             # print(transcription)
+
     final_result = json.loads(rec.FinalResult())
     transcription.append(final_result.get("text", ""))
     transcription_text = ' '.join(transcription)
-    # print(transcription_text)
-    return transcription_text
+    transcription_text = str(transcription_text)
+    t1 = time.time()
+    total_transcription_time = t1 - t0
+    print(str(total_transcription_time))
+    return transcription_text, total_transcription_time
 

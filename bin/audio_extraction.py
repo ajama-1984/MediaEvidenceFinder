@@ -21,46 +21,41 @@ def extract_audio_from_source (evidenceitem, evidencefilename, casePath):
     return extractedAudioPath, extractedtranscriptPath
 
 def splitAudio(Audiofilename, casepath):
-    # print(filename + "\n" + casepath)
     os.chdir(casepath)
     if not os.path.isdir("splitaudio"):
         os.mkdir("splitaudio")
     audio = AudioSegment.from_file(Audiofilename)
     lengthaudio = len(audio)
-    # print("Length of Audio File", lengthaudio)
     chunklist = []
     start = 0
-    # # In Milliseconds, this will cut 10 Sec of audio
     threshold = 30000
     end = 0
     counter = 0
-    basename = os.path.basename(Audiofilename)
-    mediafile1 = os.path.splitext(basename)[0]
-    # print(mediafile1)
-    while start < len(audio):
 
+    AudioSourceFile = os.path.basename(Audiofilename)
+    mediafile = os.path.splitext(AudioSourceFile)[0]
+
+    while start < len(audio):
         end += threshold
         startStr = str(start)
         endStr = str(end)
 
         timewindow = str(startStr + ":" + endStr)
         chunk = audio[start:end]
-        filename = f'splitaudio/{mediafile1}-chunk{counter}.wav'
-        # print(filename)
+        filename = f'splitaudio/{mediafile}-chunk{counter}.wav'
         filenameTimeWindow = filename + "|" + timewindow
-        # print(filenameTimeWindow)
         chunklist.append(filenameTimeWindow)
         chunk.export(filename, format="wav")
         counter += 1
-        # print(counter)
 
         start += threshold
-        # print(start)
-    # print(chunklist)
     return chunklist, lengthaudio, counter
 
 
 def convertMillis(millis):
     duration_ms = int(millis)
-    millisConverted = datetime.datetime.fromtimestamp(duration_ms / 1000.0).strftime('%M:%S.%f')[:-5]
+    millisConverted = datetime.datetime.fromtimestamp(duration_ms / 1000.0)
+    millisConverted = millisConverted.strftime('%H:%M:%S')
     return millisConverted
+
+

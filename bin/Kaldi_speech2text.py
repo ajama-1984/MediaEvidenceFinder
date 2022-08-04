@@ -15,7 +15,6 @@ model = Model(r"C:\Users\Ahmed\PycharmProjects\SpeechTranscription\models\Kaldi"
 recogniser = KaldiRecognizer(model, 16000)
 
 def Kaldi_Transcribe(extractedAudio):
-    print("Initialising Kaldi ASR Engine with default english model - Please Wait")
     with yaspin():
         model = Model(r"C:\Users\Ahmed\PycharmProjects\SpeechTranscription\models\Kaldi")
         recogniser = KaldiRecognizer(model, 16000)
@@ -41,7 +40,7 @@ def kaldi (extractedAudio, CaseConfigFileName, casePath):
     keywords = input("Please provide Keywords - Separate keyword with a comma: \n")
     keyword_list = str(keywords).split(",")
     print(keyword_list)
-    print("Transcribing Evidence Please Wait")
+    print("Initialising Kaldi ASR Engine with default english model - Please Wait")
     for i in extractedAudio:
         evidence = i.split("|")
         mediafile = evidence[0]
@@ -49,6 +48,8 @@ def kaldi (extractedAudio, CaseConfigFileName, casePath):
         evidenceItem = evidence[2]
         chunklist, lengthaudio, counter = splitAudio(mediafile, casePath)
         keywordsFoundList = []
+        print(keywordsFoundList)
+        print("Transcribing Evidence Item " + evidenceItem + " Please Wait")
         for a in chunklist:
             z = a.split("|")
             wavchunk = z[0]
@@ -67,6 +68,7 @@ def kaldi (extractedAudio, CaseConfigFileName, casePath):
         f = open(transcriptPath, "w")
         f.write(transcription_text)
         f.close()
+        print(keywordsFoundList)
         config = ConfigParser(strict=False)
         config['CaseConfiguration'] = {}
         config.read(CaseConfigFileName)
@@ -76,7 +78,7 @@ def kaldi (extractedAudio, CaseConfigFileName, casePath):
         config.set(str(evidenceItem), 'asrtranscription_engine_used', ASREngineUsed)
         config.set(str(evidenceItem), 'asrtranscription_model_used', deepspeechModel)
         config.set(str(evidenceItem), 'transcriptlocation', transcriptPath)
-        config.set(str(evidenceItem), 'keywords', str(keywordsFound))
+        config.set(str(evidenceItem), 'keywords', str(keywordsFoundList))
         now = datetime.now()
         modifiedDateTime = now.strftime("%m/%d/%Y, %H:%M:%S")
         config.set('CaseConfiguration', 'modifieddatetime', modifiedDateTime)

@@ -2,7 +2,6 @@ import self as self
 from Case import Case
 from evidence import Evidence
 from ASR import ASREngine
-from keyword_searching import search_Keywords
 if __name__ == '__main__':
     print("========================================================")
     print("Welcome to MediaEvidenceFinder Application")

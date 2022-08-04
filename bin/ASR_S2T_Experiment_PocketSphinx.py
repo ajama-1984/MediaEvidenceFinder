@@ -1,4 +1,5 @@
 import speech_recognition as sr
+import time
 import os
 from pocketsphinx import Pocketsphinx, get_model_path, get_data_path
 
@@ -27,10 +28,15 @@ from pocketsphinx import Pocketsphinx, get_model_path, get_data_path
 def PocketSphinxEvaluation(extractedAudio):
     r = sr.Recognizer()
     with sr.AudioFile(extractedAudio) as source:
+        t0 = time.time()
         audio = r.listen(source)
         try:
             transcription_text = r.recognize_sphinx(audio)
         except:
             transcription_text = "ERROR - FAILED"
         print(transcription_text)
-        return transcription_text
+    transcription_text = str(transcription_text)
+    t1 = time.time()
+    total_transcription_time = t1 - t0
+    print(str(total_transcription_time))
+    return transcription_text, total_transcription_time
