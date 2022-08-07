@@ -1,3 +1,5 @@
+# Ahmed Jama
+
 import jiwer
 from pathlib import Path
 import pandas
@@ -144,18 +146,6 @@ def runASREvaluation(testlist, numberOfSamples):
         DSWER, DSMER, DSWIL, ASREngine, DSrtf = ASREval(validatedHypothesis,deepspeechResult, "Deepspeech", deepspeechTranscriptionTime, sampleAudioLength)
         PSWER, PSMER, PSWIL, ASREngine, PSrtf = ASREval(validatedHypothesis, PocketSphinxResult, "PocketSphinx", pocketSphinxTranscriptionTime, sampleAudioLength)
         KDWER, KDMER, KDWIL, ASREngine, KDrtf = ASREval(validatedHypothesis, kaldiResult, "Kaldi", kaldiTranscriptionTime, sampleAudioLength)
-
-        # print("WER DeepSpeech = " + (str(int(DSWER*100)) + "%"))
-        # print("MER DeepSpeech = " + (str(int(DSMER*100)) + "%"))
-        # print("WIL DeepSpeech = " + (str(int(DSWIL*100)) + "%"))
-        #
-        # print("WER PocketSphinx = " + (str(int(PSWER*100)) + "%"))
-        # print("MER PocketSphinx = " + (str(int(PSMER*100)) + "%"))
-        # print("WIL PocketSphinx = " + (str(int(PSWIL*100)) + "%"))
-        #
-        # print("WER Kaldi = " + (str(int(KDWER*100)) + "%"))
-        # print("MER Kaldi = " + (str(int(KDMER*100)) + "%"))
-        # print("WIL Kaldi = " + (str(int(KDWIL*100)) + "%"))
 
         results = {'filename':filename,'Ground_Truth':validatedHypothesis,'Kaldi_Hypothesis':kaldiResult,'PocketSphinx_Hypothesis':PocketSphinxResult,'DeepSpeech_Hypothesis':deepspeechResult,'Kaldi_WER':KDWER,'Kaldi_MER':KDMER,
                  'Kaldi_WIL':KDWIL,'Kaldi_RTF':KDrtf,'PocketSphinx_WER':PSWER,'PocketSphinx_MER':PSMER,'PocketSphinx_WIL':PSWIL, 'PocketSphinx_RTF':PSrtf,'DeepSpeech_WER':DSWER,'DeepSpeech_MER':DSMER,'DeepSpeech_WIL':DSWIL, 'eepSpeech_RTF':DSrtf}

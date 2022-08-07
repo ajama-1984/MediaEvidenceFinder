@@ -1,3 +1,5 @@
+# Evidence Class and functions
+
 from Case import Case
 import os
 from configparser import ConfigParser
@@ -49,13 +51,11 @@ class Evidence(Case):
                 for key, value in files_identified.items():
                     ExistingEvidencelist = Case.getEvidenceIDList(self, CurrentCase)
                     NumberOfEvidenceItems = int(NumberOfEvidenceItems)
-                    # print(NumberOfEvidenceItems)
                     NumberOfEvidenceItems += 1
                     print(NumberOfEvidenceItems)
                     EvidenceListName = "Evidence" + str(NumberOfEvidenceItems)
                     print(EvidenceListName)
                     listEvidence.append(EvidenceListName)
-                    # print(listEvidence)
                     config[EvidenceListName] = {}
                     EvidenceItemConfiguration = config[EvidenceListName]
                     evidenceItem = key

@@ -1,9 +1,11 @@
+# File identification Functions
 import os
 import exiftool
 import hashlib
 from datetime import datetime
 
 def list_files(EvidencePath):
+
     evidenceList = []
     for root, dirs, files in os.walk(EvidencePath):
         for name in files:
