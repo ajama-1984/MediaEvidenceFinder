@@ -15,17 +15,17 @@ from audio_extraction import convertMillis
 from keyword_searching import searchKeywords
 from reportGenerator import generateReport
 import sys
+import os
 from os.path import abspath
-filename = r'C:\Users\Ahmed\PycharmProjects\SpeechTranscription\definitions.py'
-print(filename)
-sys.path.insert(1, filename)
+rootProjectPath = os.path.abspath(__file__ + "/../../")
+sys.path.insert(1, rootProjectPath)
 from definitions import *
 
 # Initialising default model and its parameters
 # Model and parameters from from https://github.com/mozilla/DeepSpeech/releases/tag/v0.9.3
 
-model_file_path = ROOT_DIR + "\\model\\DeepSpeech\\" + 'deepspeech-0.9.3-models.pbmm'
-scorer_file_path = ROOT_DIR + "\\model\\DeepSpeech\\" + 'deepspeech-0.9.3-models.scorer'
+model_file_path = os.path.normpath(ROOT_DIR + "\\models\\DeepSpeech\\" + 'deepspeech-0.9.3-models.pbmm')
+scorer_file_path = os.path.normpath(ROOT_DIR + "\\models\\DeepSpeech\\" + 'deepspeech-0.9.3-models.scorer')
 
 # model_file_path = r'C:\Users\Ahmed\PycharmProjects\SpeechTranscription\models\DeepSpeech\deepspeech-0.9.3-models.pbmm'
 # scorer_file_path = r'C:\Users\Ahmed\PycharmProjects\SpeechTranscription\models\DeepSpeech\deepspeech-0.9.3-models.scorer'
