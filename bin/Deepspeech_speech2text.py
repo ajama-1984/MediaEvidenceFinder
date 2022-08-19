@@ -61,7 +61,6 @@ def deepSpeech(evidenceObjects, CaseConfigFileName, casePath):
     keywords = input("Please provide Keywords - Separate keyword with a comma: \n")
     # Keywords provided
     keyword_list = str(keywords).split(",")
-    print("Transcribing Audio using DeepSpeech ASR Engine - Please wait")
     # For each piece of evidence the evidence is transcribed in 30 second chunks, and the resulting transcript is
     # searched for keywords and each segment of evidence transcribed is written to the transcript path which is a
     # text file with the evidence name as the filename
@@ -70,12 +69,15 @@ def deepSpeech(evidenceObjects, CaseConfigFileName, casePath):
         mediafile = evidence[0]
         transcriptPath = evidence[1]
         evidenceItem = evidence[2]
+        evidenceName = evidence[3]
         # Evidence split into chunks so that each chunk of 30 seconds can be transcribed and keyword searching can be
         # conducted.
         chunklist, lengthaudio, counter = splitAudio(mediafile, casePath)
         # Empty keyword list
         keywordsFoundList = []
-        print("Transcribing Evidence Item " + evidenceItem + " Please Wait")
+        print("#####################################################")
+        print("Transcribing Evidence Item " + evidenceItem + " - " + evidenceName + " Using Mozilla DeepSpeech. Please Wait!")
+        print("#####################################################")
         # Creates empty transcript text file ready for writing with ASR generated transcript
         open(transcriptPath, 'w').close()
         # for each 30 second chunk of evidence, the evidence is transcribed, written to the transcript text file and
@@ -95,7 +97,6 @@ def deepSpeech(evidenceObjects, CaseConfigFileName, casePath):
             keywordsFound = searchKeywords(keyword_list, transcription_text, starttime, endtime, evidenceItem)
             for x in keywordsFound:
                 keywordsFoundList.append(x)
-
         # Once the evidence is transcribed, the resulting keywords, transcript location as well as what ASR
         # Engine/Model were utilised is updated for that evidence object.
         config = ConfigParser(strict=False)
@@ -116,6 +117,9 @@ def deepSpeech(evidenceObjects, CaseConfigFileName, casePath):
         # All the updated values are written to the case configuration file
         with open(CaseConfigFileName, 'w') as configfile:
             config.write(configfile)
+    print("#####################################################")
     print("Transcription Completed!")
+    print("#####################################################")
+    # Report is then generated
     generateReport(CaseConfigFileName)
 

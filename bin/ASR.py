@@ -3,7 +3,6 @@
 # # # # # # # # # # # # #
 
 # Importing needed libraries
-from yaspin import yaspin # Loading bar functionality
 from configparser import ConfigParser # writing to config file
 from Case import Case # Class class and functions
 from audio_extraction import extract_audio_from_source # audio extraction function
@@ -32,7 +31,7 @@ class ASREngine:
             evidenceitem = config.get(str(evidenceItem), 'evidencefilepath')
             evidenceName = config.get(str(evidenceItem), 'evidencefilename')
             evidenceExtractedAudio, extractedtranscriptPath = extract_audio_from_source(evidenceitem,evidenceName,casePath)
-            evidenceAudiodata.append(evidenceExtractedAudio + "|" + extractedtranscriptPath + "|" + evidenceItem)
+            evidenceAudiodata.append(evidenceExtractedAudio + "|" + extractedtranscriptPath + "|" + evidenceItem + "|" + evidenceName)
         return evidenceAudiodata
 
     def ASREngine(self, CaseConfigFileName, CurrentCase):
@@ -49,7 +48,8 @@ class ASREngine:
         # on the choice, the evidence is transcribed by the chosen ASR engine, which is called as the functions for
         # each ASR engine has been separated
         if userInput == "1":
-            userInput = input("Press 1 to use default model or 2 to enter a path to a custom model you wish to use for Kaldi\n")
+            print("========================================================")
+            userInput = input("Press 1 to use default model \n")
             print("========================================================")
             if userInput == "1":
                 try:
@@ -65,15 +65,15 @@ class ASREngine:
                     func_code = "404"
                     return func_code
             else:
-                userInput = input("Enter Path for Custom Kaldi Model - See https://alphacephei.com/vosk/models - for compatible models in several lanuages\n")
+                print("Invalid Selection Exiting Program")
+                exit(0)
         else:
             if userInput == "2":
                 print("Initialising default PocketSphinx model\n")
                 try:
                     print("Extracting Audio from Evidence  - Please wait")
                     # Chosen ASR engine function is called.
-                    with yaspin():
-                        extractedAudio = ASREngine.extractAudio(self, CaseConfigFileName, CurrentCase)
+                    extractedAudio = ASREngine.extractAudio(self, CaseConfigFileName, CurrentCase)
                     casePath = Case.get_casePath(self, CurrentCase)
                     # Chosen ASR engine function is called.
                     pocketSphinx(extractedAudio, CaseConfigFileName, casePath)

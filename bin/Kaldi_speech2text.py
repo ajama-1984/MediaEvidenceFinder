@@ -12,7 +12,7 @@ from audio_extraction import splitAudio
 from audio_extraction import convertMillis
 from keyword_searching import searchKeywords
 from reportGenerator import generateReport
-from yaspin import yaspin
+from halo import Halo
 from vosk import SetLogLevel
 SetLogLevel(-1) # Supresses Log Messages
 
@@ -25,9 +25,9 @@ def Kaldi_Transcribe(extractedAudio):
     # Transcription function using Kaldi ASR Engine and default Model
     # Adapted from - https://github.com/alphacep/vosk-api/blob/master/python/example/test_simple.py and
     # https://towardsdatascience.com/transcribe-large-audio-files-offline-with-vosk-a77ee8f7aa28
-    with yaspin():
-        model = Model(r"C:\Users\Ahmed\PycharmProjects\SpeechTranscription\models\Kaldi")
-        recogniser = KaldiRecognizer(model, 16000)
+
+    model = Model(r"C:\Users\Ahmed\PycharmProjects\SpeechTranscription\models\Kaldi")
+    recogniser = KaldiRecognizer(model, 16000)
     wf = wave.open(extractedAudio, "rb")
     rec = KaldiRecognizer(model, wf.getframerate())
     transcription = []
@@ -46,17 +46,20 @@ def Kaldi_Transcribe(extractedAudio):
     return transcription_text
 
 def kaldi (extractedAudio, CaseConfigFileName, casePath):
+    print("#####################################################")
     keywords = input("Please provide Keywords - Separate keyword with a comma: \n")
     keyword_list = str(keywords).split(",")
-    print("Initialising Kaldi ASR Engine with default english model - Please Wait")
     for i in extractedAudio:
         evidence = i.split("|")
         mediafile = evidence[0]
         transcriptPath = evidence[1]
         evidenceItem = evidence[2]
+        evidenceName = evidence[3]
+        print("#####################################################")
+        print("Transcribing Evidence Item " + evidenceItem + " - " + evidenceName + " Using Kaldi. Please Wait!")
+        print("#####################################################")
         chunklist, lengthaudio, counter = splitAudio(mediafile, casePath)
         keywordsFoundList = []
-        print("Transcribing Evidence Item " + evidenceItem + " Please Wait")
         open(transcriptPath, 'w').close()
         for a in chunklist:
             z = a.split("|")
@@ -73,7 +76,6 @@ def kaldi (extractedAudio, CaseConfigFileName, casePath):
             keywordsFound = searchKeywords(keyword_list,transcription_text,starttime,endtime,evidenceItem)
             for x in keywordsFound:
                 keywordsFoundList.append(x)
-        print(keywordsFoundList)
         config = ConfigParser(strict=False)
         config['CaseConfiguration'] = {}
         config.read(CaseConfigFileName)
@@ -90,5 +92,7 @@ def kaldi (extractedAudio, CaseConfigFileName, casePath):
         config.set('CaseConfiguration', 'case_keywords', keywords)
         with open(CaseConfigFileName, 'w') as configfile:
             config.write(configfile)
+    print("#####################################################")
     print("Transcription Completed!")
+    print("#####################################################")
     generateReport(CaseConfigFileName)

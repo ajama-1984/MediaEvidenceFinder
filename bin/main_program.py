@@ -1,3 +1,8 @@
+print("#####################################################")
+print("PLEASE NOTE:")
+print("The Media Evidence Finder Tool is initialising. This can take several minutes. Please Wait!")
+print("None of the ASR Engines are utilising GPU Acceleration. Expect reduced transcription speed.")
+print("#####################################################")
 import self as self
 from Case import Case
 from evidence import Evidence
@@ -80,6 +85,12 @@ if __name__ == '__main__':
                     filesIdentified = evidenceToProcess[2]
                     if func_code == "200":
                         ProcessEvidence = Evidence.processEvidence(self,CaseConfigFileName,func_code,filesIdentified, CurrentCase)
+                        Evidence.retrieveEvidence(self, CaseConfigFileName, CurrentCase)
+                        userChoice = input(
+                            "Press 1 transcribe evidence using Automated Speech Recognition \n")
+                        if userChoice == "1":
+                            casePath = Case.get_casePath(self, CurrentCase)
+                            ASREngine.ASREngine(self, CaseConfigFileName, CurrentCase)
                     else:
                         print("Evidence Identification Failed. Exiting Program")
                         exit(0)

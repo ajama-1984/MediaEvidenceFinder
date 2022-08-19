@@ -23,6 +23,7 @@ def extract_audio_from_source (evidenceitem, evidencefilename, casePath):
     evidenceitemAudio = os.path.normpath(evidenceitem) + evidencefilename2
     audioclip = AudioFileClip(evidenceitemAudio)
     audioclip.write_audiofile(extractedAudioPath, nbytes=2, codec='pcm_s16le', ffmpeg_params=["-ac", "1", "-ar", "16000"])
+    audioclip.close()
     return extractedAudioPath, extractedtranscriptPath
 
 def splitAudio(Audiofilename, casepath):

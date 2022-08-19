@@ -49,6 +49,7 @@ class Case:
             print(func_code)
             return func_code
         else:
+            print("#####################################################")
             print(
                 "A case with the following settings will be created \n" + "CaseID: " + caseID + "\nName of Case: " + caseName + "\nDescription of Case: " + caseDescription + "\nName of Investigator: " + investigator + "\nName of Case Configuration File: " + CaseConfigName)
 
@@ -145,6 +146,7 @@ class Case:
             configDict.update({"ReportPath": ReportPath})
             configDict.update({"case_Keywords": case_Keywords})
             func_code = "200"
+            print("#####################################################")
             print("Case " + caseName + " has been opened")
             return func_code,configDict,caseFile
         else:

@@ -4,6 +4,8 @@ from Case import Case
 import os
 from configparser import ConfigParser
 from file_Identification_test import file_identification, list_files
+from halo import Halo
+import time
 class Evidence(Case):
     def __init__(self,fileID, fileName, fileType, caseID, filePath, transcriptPath, fileModifiedDateTime, ASREngine, ASRModel):
         self.fileName = fileName
@@ -21,11 +23,12 @@ class Evidence(Case):
         evidenceFolderPath = os.path.normpath(evidenceFolderUsrPath)
         if os.path.exists(evidenceFolderPath):
             print("Path Valid")
-            listfiles = list_files(evidenceFolderPath)
-            file_ident = file_identification(evidenceFolderPath,listfiles)
-            func_code = file_ident[0]
-            files_identified = file_ident[1]
-            return func_code, caseID, files_identified
+            with Halo(text='Finding Media Files. Please Wait!', spinner='dots'):
+                listfiles = list_files(evidenceFolderPath)
+                file_ident = file_identification(evidenceFolderPath,listfiles)
+                func_code = file_ident[0]
+                files_identified = file_ident[1]
+                return func_code, caseID, files_identified
 
     def processEvidence(self,caseFile,func_code,files_identified,CurrentCase):
         if files_identified is not None and func_code == "200":
@@ -42,64 +45,66 @@ class Evidence(Case):
             print("========================================================")
             import_check = input("Proceed with Importing the above files as Evidence - Yes or No? \n")
             if import_check == "Yes" or "y" or "yes":
-                print("Adding Evidence to CASE configuration file")
-                NumberOfEvidenceItems = Case.getNumberOfEvidenceItems(self,CurrentCase)
-                config = ConfigParser(strict=False)
-                config.read(caseFile)
-                listEvidence = Case.getEvidenceIDList(self, CurrentCase)
-                listEvidence = listEvidence.split(",")
-                for key, value in files_identified.items():
-                    ExistingEvidencelist = Case.getEvidenceIDList(self, CurrentCase)
-                    NumberOfEvidenceItems = int(NumberOfEvidenceItems)
-                    NumberOfEvidenceItems += 1
-                    print(NumberOfEvidenceItems)
-                    EvidenceListName = "Evidence" + str(NumberOfEvidenceItems)
-                    print(EvidenceListName)
-                    listEvidence.append(EvidenceListName)
-                    config[EvidenceListName] = {}
-                    EvidenceItemConfiguration = config[EvidenceListName]
-                    evidenceItem = key
-                    Evidenceproperties = str(value)
-                    EvidenceAttribute = Evidenceproperties.split('|')
-                    evidencemimeType = EvidenceAttribute[0]
-                    evidenceFileName = EvidenceAttribute[1]
-                    evidenceFilePath = EvidenceAttribute[2]
-                    evidenceFileSize = EvidenceAttribute[3]
-                    evidenceFileCreationTime = EvidenceAttribute[4]
-                    evidenceFileAccessedTime = EvidenceAttribute[5]
-                    evidenceFileModifiedTime = EvidenceAttribute[6]
-                    evidenceFileExtension = EvidenceAttribute[7]
-                    evidenceFileHash = EvidenceAttribute[9]
-                    evidenceAddedDateTime = EvidenceAttribute[10]
+                with Halo(text='Adding detected files to case. Please Wait! \n', spinner='dots'):
+                    time.sleep(5)
+                    NumberOfEvidenceItems = Case.getNumberOfEvidenceItems(self,CurrentCase)
+                    config = ConfigParser(strict=False)
+                    config.read(caseFile)
+                    listEvidence = Case.getEvidenceIDList(self, CurrentCase)
+                    listEvidence = listEvidence.split(",")
+                    for key, value in files_identified.items():
+                        ExistingEvidencelist = Case.getEvidenceIDList(self, CurrentCase)
+                        NumberOfEvidenceItems = int(NumberOfEvidenceItems)
+                        NumberOfEvidenceItems += 1
+                        # print(NumberOfEvidenceItems)
+                        EvidenceListName = "Evidence" + str(NumberOfEvidenceItems)
+                        # print(EvidenceListName)
+                        listEvidence.append(EvidenceListName)
+                        config[EvidenceListName] = {}
+                        EvidenceItemConfiguration = config[EvidenceListName]
+                        evidenceItem = key
+                        Evidenceproperties = str(value)
+                        EvidenceAttribute = Evidenceproperties.split('|')
+                        evidencemimeType = EvidenceAttribute[0]
+                        evidenceFileName = EvidenceAttribute[1]
+                        evidenceFilePath = EvidenceAttribute[2]
+                        evidenceFileSize = EvidenceAttribute[3]
+                        evidenceFileCreationTime = EvidenceAttribute[4]
+                        evidenceFileAccessedTime = EvidenceAttribute[5]
+                        evidenceFileModifiedTime = EvidenceAttribute[6]
+                        evidenceFileExtension = EvidenceAttribute[7]
+                        evidenceFileHash = EvidenceAttribute[9]
+                        evidenceAddedDateTime = EvidenceAttribute[10]
 
-                    print(evidenceFileName)
-                    strNumberOfEvidenceItems = str(NumberOfEvidenceItems)
+                        # print(evidenceFileName)
+                        strNumberOfEvidenceItems = str(NumberOfEvidenceItems)
 
-                    EvidenceItemConfiguration['evidenceID'] = strNumberOfEvidenceItems
-                    EvidenceItemConfiguration['evidenceItem'] = evidenceItem
-                    EvidenceItemConfiguration['evidencemimeType'] = evidencemimeType
-                    EvidenceItemConfiguration['evidenceFileName'] = evidenceFileName
-                    EvidenceItemConfiguration['evidenceFilePath'] = evidenceFilePath
-                    EvidenceItemConfiguration['evidenceFileSize'] = evidenceFileSize
-                    EvidenceItemConfiguration['evidenceFileCreationTime'] = evidenceFileCreationTime
-                    EvidenceItemConfiguration['evidenceFileAccessedTime'] = evidenceFileAccessedTime
-                    EvidenceItemConfiguration['evidenceFileModifiedTime'] = evidenceFileModifiedTime
-                    EvidenceItemConfiguration['evidenceFileExtension'] = evidenceFileExtension
-                    EvidenceItemConfiguration['evidenceFileHash'] = evidenceFileHash
-                    EvidenceItemConfiguration['evidenceAddedDateTime'] = evidenceAddedDateTime
-                    EvidenceItemConfiguration['aSRTranscription_Engine_Used'] = ""
-                    EvidenceItemConfiguration['aSRTranscription_Model_Used'] = ""
-                    EvidenceItemConfiguration['transcriptLocation'] = ""
+                        EvidenceItemConfiguration['evidenceID'] = strNumberOfEvidenceItems
+                        EvidenceItemConfiguration['evidenceItem'] = evidenceItem
+                        EvidenceItemConfiguration['evidencemimeType'] = evidencemimeType
+                        EvidenceItemConfiguration['evidenceFileName'] = evidenceFileName
+                        EvidenceItemConfiguration['evidenceFilePath'] = evidenceFilePath
+                        EvidenceItemConfiguration['evidenceFileSize'] = evidenceFileSize
+                        EvidenceItemConfiguration['evidenceFileCreationTime'] = evidenceFileCreationTime
+                        EvidenceItemConfiguration['evidenceFileAccessedTime'] = evidenceFileAccessedTime
+                        EvidenceItemConfiguration['evidenceFileModifiedTime'] = evidenceFileModifiedTime
+                        EvidenceItemConfiguration['evidenceFileExtension'] = evidenceFileExtension
+                        EvidenceItemConfiguration['evidenceFileHash'] = evidenceFileHash
+                        EvidenceItemConfiguration['evidenceAddedDateTime'] = evidenceAddedDateTime
+                        EvidenceItemConfiguration['aSRTranscription_Engine_Used'] = ""
+                        EvidenceItemConfiguration['aSRTranscription_Model_Used'] = ""
+                        EvidenceItemConfiguration['transcriptLocation'] = ""
 
-                    config.get('CaseConfiguration', 'numberofevidenceitems')
-                    config.set('CaseConfiguration', 'numberofevidenceitems', strNumberOfEvidenceItems)
-                    addedEvidence = ','.join(str(x) for x in listEvidence)
-                    config.get('CaseConfiguration', 'evidenceidlist')
-                    config.set('CaseConfiguration', 'evidenceidlist', addedEvidence)
-                with open(caseFile, 'w') as configfile:
-                    config.write(configfile)
-                    func_code = "200"
-                    return func_code
+                        config.get('CaseConfiguration', 'numberofevidenceitems')
+                        config.set('CaseConfiguration', 'numberofevidenceitems', strNumberOfEvidenceItems)
+                        addedEvidence = ','.join(str(x) for x in listEvidence)
+                        config.get('CaseConfiguration', 'evidenceidlist')
+                        config.set('CaseConfiguration', 'evidenceidlist', addedEvidence)
+                    with open(caseFile, 'w') as configfile:
+                        config.write(configfile)
+                        func_code = "200"
+                        print("Detected Media Files added as Evidence")
+                        return func_code
             else:
                 if import_check == "No" or "no" or "n":
                     print("The Files have not been imported as evidence")

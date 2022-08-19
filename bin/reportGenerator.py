@@ -29,7 +29,7 @@ def generateReport(CaseConfigFile):
         reportPDF.add_page()
         reportPDF.set_font('helvetica','', 18)
         reportPDF.cell(30,10,"Case Information", ln=True)
-        reportPDF.set_font('helvetica', '', 12)
+        reportPDF.set_font('helvetica', '', 11)
         reportPDF.cell(0, 5, "Case ID - " + caseID, ln=True)
         reportPDF.cell(0, 5, "Case Name - " + caseName, ln=True)
         reportPDF.cell(0, 5, "Case Description - " + caseDescription, ln=True)
@@ -79,7 +79,7 @@ def generateReport(CaseConfigFile):
 
             reportPDF.set_font('helvetica', '', 18)
             reportPDF.cell(30, 10, evidenceItem, ln=True)
-            reportPDF.set_font('helvetica', '', 12)
+            reportPDF.set_font('helvetica', '', 11)
             reportPDF.cell(0, 5, "Evidence ID - " + evidenceid, ln=True)
             reportPDF.cell(0, 5, "Evidence Source Full Path - " + evidenceitem, ln=True)
             reportPDF.cell(0, 5, "Evidence MIME Type - " + evidencemimetype, ln=True)
@@ -92,8 +92,8 @@ def generateReport(CaseConfigFile):
             reportPDF.cell(0, 5, "Evidence File Extension - " + evidencefileextension, ln=True)
             reportPDF.cell(0, 5, "Evidence File Hash - " + evidencefilehash, ln=True)
             reportPDF.cell(0, 5, "Evidence added to case on - " + evidenceaddeddatetime, ln=True)
-            reportPDF.cell(0, 5, "ASR Engine utilised to generate transcript - " + asrtranscription_engine_used, ln=True)
-            reportPDF.cell(0, 5, "ASR Model utilised to generate transcript - " + asrtranscription_model_used, ln=True)
+            reportPDF.multi_cell(0, 5, "ASR Engine utilised to generate transcript - " + asrtranscription_engine_used)
+            reportPDF.multi_cell(0, 5, "ASR Model utilised to generate transcript - " + asrtranscription_model_used)
             reportPDF.cell(0, 5, "Transcript File Location - ", ln=True)
             reportPDF.multi_cell(0, 5, transcriptlocation)
             reportPDF.cell(0, 5, "Keywords Identified: ", ln=True)
@@ -113,15 +113,15 @@ def generateReport(CaseConfigFile):
 
             reportPDF.set_font('helvetica', '', 18)
             reportPDF.cell(10, 10, "Transcript of " + evidenceItem, ln=True)
-            reportPDF.set_font('helvetica', '', 12)
+            reportPDF.set_font('helvetica', '', 11)
             transcriptFile = open(transcriptlocation, "r")
             for line in transcriptFile:
                 cleanedLine = line.rstrip()
                 reportPDF.multi_cell(0, 5, txt=cleanedLine)
-    reportPath = casePath + "\\Reports\\" + CaseConfigName + " Report" + ".pdf"
-    reportPDF.output(reportPath)
     now = datetime.now()
-    modifiedDateTime = now.strftime("%m/%d/%Y, %H:%M:%S")
+    modifiedDateTime = now.strftime("%d-%m-%Y-%H-%M-%S")
+    reportPath = casePath + "\\Reports\\" + CaseConfigName + " Report" + str(modifiedDateTime) + ".pdf"
+    reportPDF.output(reportPath)
     config.set('CaseConfiguration', 'modifieddatetime', modifiedDateTime)
     config.set('CaseConfiguration', 'ReportPath', reportPath)
     with open(CaseConfigFile, 'w') as configfile:
