@@ -43,13 +43,13 @@ def random_selection(datasetcsvfile,dirpathDataset,
 
 
 def sampleRetrieval(sampleFileList):
-    dirpath = r'Z:\DissertationSoftwareDev\files\cv-corpus-9.0-2022-04-27\en\clips'
-    destDirectory = r'../dataset/commonVoice/clips'
+    directorypath = r'Z:\DissertationSoftwareDev\files\cv-corpus-9.0-2022-04-27\en\clips'
+    destDirectoryPath = r'../dataset/commonVoice/clips'
     for fname in sampleFileList:
-        srcpath = os.path.join(dirpath, fname)
-        print(srcpath)
-        print(destDirectory)
-        shutil.copy(srcpath, destDirectory)
+        sourcePath = os.path.join(directorypath, fname)
+        print(sourcePath)
+        print(destDirectoryPath)
+        shutil.copy(sourcePath, destDirectoryPath)
     print("Complete!")
 
 def retrieveHumanBaseline(list_of_random_samples_selected):

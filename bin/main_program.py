@@ -64,9 +64,11 @@ if __name__ == '__main__':
                 print("Case Already Exists")
     else:
         if userChoice == "2":
+            # If it is an existing case, the openCase function is called where the user inputs the path of the case configuration file.
             CurrentCase = Case.openCase(self)
             func_code = Case.caseFuncCodeCheck(self, currentCase=CurrentCase)
             if func_code == "200":
+                # If loaded successfully the case data is loaded
                 caseID = Case.get_caseID(self,CurrentCase)
                 caseName = Case.get_caseName(self, CurrentCase)
                 caseDescription = Case.get_caseDescription(self, CurrentCase)
@@ -80,15 +82,18 @@ if __name__ == '__main__':
                 print("========================================================")
                 userChoice = input("Press 1 to add evidence or 2 to view Evidence currently added \n")
                 if userChoice == "1":
+                    # Add new evidence to existing case
                     evidenceToProcess = Evidence.selectEvidence(self,caseID=caseID)
                     func_code = Evidence.evidenceFuncCodeCheck(self,evidenceToProcess)
                     filesIdentified = evidenceToProcess[2]
                     if func_code == "200":
+                        # if evidence is identified, then the too will process the evidence and print out the added evidence
                         ProcessEvidence = Evidence.processEvidence(self,CaseConfigFileName,func_code,filesIdentified, CurrentCase)
                         Evidence.retrieveEvidence(self, CaseConfigFileName, CurrentCase)
                         userChoice = input(
                             "Press 1 transcribe evidence using Automated Speech Recognition \n")
                         if userChoice == "1":
+                            # User then proceeds to transcribe evidence
                             casePath = Case.get_casePath(self, CurrentCase)
                             ASREngine.ASREngine(self, CaseConfigFileName, CurrentCase)
                     else:
@@ -96,9 +101,11 @@ if __name__ == '__main__':
                         exit(0)
                 else:
                     if userChoice == "2":
+                        # If user does not want to add evidence, the existing evidence on the case is printed.
                         Evidence.retrieveEvidence(self, CaseConfigFileName, CurrentCase)
                         userChoice = input("Press 1 to add evidence or 2 to transcribe evidence using Automated Speech Recognition \n")
                         if userChoice == "1":
+                            # Add new evidence to existing case
                             evidenceToProcess = Evidence.selectEvidence(self, caseID=caseID)
                             func_code = Evidence.evidenceFuncCodeCheck(self, evidenceToProcess)
                             filesIdentified = evidenceToProcess[2]
@@ -110,6 +117,7 @@ if __name__ == '__main__':
                                 exit(0)
                         else:
                             if userChoice == "2":
+                                # Calls the ASR function if user wants evidence to be transcribed.
                                 casePath = Case.get_casePath(self, CurrentCase)
                                 ASREngine.ASREngine(self, CaseConfigFileName, CurrentCase)
                     else:

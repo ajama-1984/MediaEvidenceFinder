@@ -27,7 +27,7 @@ def extract_audio_from_source (evidenceitem, evidencefilename, casePath):
     return extractedAudioPath, extractedtranscriptPath
 
 def splitAudio(Audiofilename, casepath):
-    # Takes the extracted audio file and splits it into 30 second chunks, thus prividing a timeframe for when a keyword was detected.
+    # Takes the extracted audio file and splits it into 30 second chunks, thus providing a timeframe for when a keyword was detected.
     # Adapted from - https://stackoverflow.com/questions/36799902/how-to-splice-an-audio-file-wav-format-into-1-sec-splices-in-python
     os.chdir(casepath)
     if not os.path.isdir("splitaudio"):
