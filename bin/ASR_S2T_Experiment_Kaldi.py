@@ -9,13 +9,13 @@ import json
 import time
 from vosk import SetLogLevel
 SetLogLevel(-1) # Supresses Log messages
-
+import os
 def kaldiEvaluation (extractedAudio):
     # Transcription function using Kaldi ASR Engine and default Model for ASR Evaluation
     # Adapted from - https://github.com/alphacep/vosk-api/blob/master/python/example/test_simple.py and
     # https://towardsdatascience.com/transcribe-large-audio-files-offline-with-vosk-a77ee8f7aa28
-    model = Model(r"../models/Kaldi")
-    recogniser = KaldiRecognizer(model, 16000)
+    directory = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../models/Kaldi'))
+    model = Model(directory)
     wf = wave.open(extractedAudio, "rb")
     rec = KaldiRecognizer(model, wf.getframerate())
     transcription = []

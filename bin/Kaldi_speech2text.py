@@ -15,19 +15,14 @@ from reportGenerator import generateReport
 from halo import Halo
 from vosk import SetLogLevel
 SetLogLevel(-1) # Supresses Log Messages
-
-# Specify Model Path
-model = Model(r"C:\Users\Ahmed\PycharmProjects\SpeechTranscription\models\Kaldi")
-# Initialise ASR engine with the model
-recogniser = KaldiRecognizer(model, 16000)
+import os
 
 def Kaldi_Transcribe(extractedAudio):
     # Transcription function using Kaldi ASR Engine and default Model
     # Adapted from - https://github.com/alphacep/vosk-api/blob/master/python/example/test_simple.py and
     # https://towardsdatascience.com/transcribe-large-audio-files-offline-with-vosk-a77ee8f7aa28
-
-    model = Model(r"C:\Users\Ahmed\PycharmProjects\SpeechTranscription\models\Kaldi")
-    recogniser = KaldiRecognizer(model, 16000)
+    directory = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../models/Kaldi'))
+    model = Model(directory)
     wf = wave.open(extractedAudio, "rb")
     rec = KaldiRecognizer(model, wf.getframerate())
     transcription = []
