@@ -14,9 +14,13 @@ def kaldiEvaluation (extractedAudio):
     # Transcription function using Kaldi ASR Engine and default Model for ASR Evaluation
     # Adapted from - https://github.com/alphacep/vosk-api/blob/master/python/example/test_simple.py and
     # https://towardsdatascience.com/transcribe-large-audio-files-offline-with-vosk-a77ee8f7aa28
+    # Get directory of model folder without changing program directory.
     directory = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../models/Kaldi'))
+    # Initalise Kaldi Model
     model = Model(directory)
+    # Read audio file
     wf = wave.open(extractedAudio, "rb")
+    # Intalises the Kaldi recogniser using the model and the opened audio file on a per frame basis
     rec = KaldiRecognizer(model, wf.getframerate())
     transcription = []
     while True:
